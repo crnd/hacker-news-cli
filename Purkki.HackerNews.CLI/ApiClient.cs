@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
-using Purkki.HackerNews.CLI.DTOs;
 using Purkki.HackerNews.CLI.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -48,13 +48,29 @@ namespace Purkki.HackerNews.CLI
                     var response = await _client.SendAsync(request);
                     var json = await response.Content.ReadAsStringAsync();
                     var dto = JsonConvert.DeserializeObject<StoryDTO>(json);
-                    var story = new Story(dto);
+                    var story = new Story
+                    {
+                        Id = dto.Id,
+                        Created = DateTimeOffset.FromUnixTimeSeconds(dto.Time).ToLocalTime(),
+                        Title = dto.Title,
+                        Creator = dto.By,
+                        CommentIds = dto.Kids
+                    };
                     stories.Add(story);
                     _topStories.Add(id, story);
                 }
             }
 
             return stories;
+        }
+
+        private class StoryDTO
+        {
+            public long Id { get; set; }
+            public string Title { get; set; }
+            public long Time { get; set; }
+            public string By { get; set; }
+            public IList<long> Kids { get; set; }
         }
     }
 }
