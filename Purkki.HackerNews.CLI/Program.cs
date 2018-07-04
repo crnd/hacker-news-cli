@@ -68,7 +68,7 @@ namespace Purkki.HackerNews.CLI
             Console.ForegroundColor = primary;
             Console.Write(story.Title);
             Console.ForegroundColor = secondary;
-            Console.Write($" ({story.CommentCount}) by {story.Creator}" + Environment.NewLine);
+            Console.Write($" by {story.Creator}" + Environment.NewLine);
         }
     }
 }

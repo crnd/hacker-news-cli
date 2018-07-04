@@ -10,6 +10,5 @@ namespace Purkki.HackerNews.CLI.Models
         public string Title { get; set; }
         public string Creator { get; set; }
         public IList<long> CommentIds { get; set; }
-        public int CommentCount => CommentIds?.Count ?? 0;
     }
 }
