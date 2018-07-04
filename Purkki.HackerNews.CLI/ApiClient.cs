@@ -13,11 +13,15 @@ namespace Purkki.HackerNews.CLI
         private readonly string _endpoint;
         private readonly HttpClient _client;
         private IList<long> _topStoryIds;
+        private IDictionary<long, Story> _topStories;
+
+        public int StoryCount => _topStoryIds?.Count ?? 0;
 
         public ApiClient(string endpoint)
         {
             _endpoint = endpoint;
             _client = new HttpClient();
+            _topStories = new Dictionary<long, Story>();
         }
 
         public async Task RefreshTopStoryIdsAsync()
@@ -26,6 +30,7 @@ namespace Purkki.HackerNews.CLI
             var response = await _client.SendAsync(storiesRequest);
             var json = await response.Content.ReadAsStringAsync();
             _topStoryIds = JsonConvert.DeserializeObject<List<long>>(json);
+            _topStories.Clear();
         }
 
         public async Task<IList<Story>> FetchTopStoriesAsync(int skip, int count)
@@ -33,12 +38,20 @@ namespace Purkki.HackerNews.CLI
             var stories = new List<Story>();
             foreach (var id in _topStoryIds.Skip(skip).Take(count))
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, _endpoint + $"item/{id}.json");
-                var response = await _client.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                var dto = JsonConvert.DeserializeObject<StoryDTO>(json);
-                var story = new Story(dto);
-                stories.Add(story);
+                if (_topStories.ContainsKey(id))
+                {
+                    stories.Add(_topStories[id]);
+                }
+                else
+                {
+                    var request = new HttpRequestMessage(HttpMethod.Get, _endpoint + $"item/{id}.json");
+                    var response = await _client.SendAsync(request);
+                    var json = await response.Content.ReadAsStringAsync();
+                    var dto = JsonConvert.DeserializeObject<StoryDTO>(json);
+                    var story = new Story(dto);
+                    stories.Add(story);
+                    _topStories.Add(id, story);
+                }
             }
 
             return stories;

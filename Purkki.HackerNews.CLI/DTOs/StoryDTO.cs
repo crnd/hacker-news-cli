@@ -1,4 +1,6 @@
-﻿namespace Purkki.HackerNews.CLI.DTOs
+﻿using System.Collections.Generic;
+
+namespace Purkki.HackerNews.CLI.DTOs
 {
     public class StoryDTO
     {
@@ -6,5 +8,6 @@
         public string Title { get; set; }
         public long Time { get; set; }
         public string By { get; set; }
+        public IList<long> Kids { get; set; }
     }
 }
