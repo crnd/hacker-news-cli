@@ -12,6 +12,12 @@ namespace Purkki.HackerNews.CLI
             Console.Clear();
         }
 
+        public static void PrintLoadingScreen()
+        {
+            Console.SetCursorPosition((Console.WindowWidth - Constants.FetchingStories.Length) / 2, Console.WindowHeight / 2);
+            Console.Write(Constants.FetchingStories);
+        }
+
         public static void PrintStories(IList<Story> stories)
         {
             PrintStoryRow(stories[0], ConsoleColor.White, ConsoleColor.Gray);

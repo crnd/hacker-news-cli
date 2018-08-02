@@ -8,6 +8,7 @@ namespace Purkki.HackerNews.CLI
         static async Task Main()
         {
             Helpers.ClearConsole();
+            Helpers.PrintLoadingScreen();
 
             var client = new ApiClient("https://hacker-news.firebaseio.com/v0/");
             await client.RefreshTopStoryIdsAsync();
