@@ -7,7 +7,8 @@ namespace Purkki.HackerNews.CLI
     {
         static async Task Main()
         {
-            Console.Clear();
+            Helpers.ClearConsole();
+
             var client = new ApiClient("https://hacker-news.firebaseio.com/v0/");
             await client.RefreshTopStoryIdsAsync();
 
@@ -20,6 +21,7 @@ namespace Purkki.HackerNews.CLI
                 if (render)
                 {
                     var stories = await client.FetchTopStoriesAsync(index, Console.WindowHeight - 1);
+                    Helpers.ClearConsole();
                     Helpers.PrintStories(stories);
                     render = false;
                 }
@@ -46,8 +48,7 @@ namespace Purkki.HackerNews.CLI
                 }
             }
 
-            Console.ResetColor();
-            Console.Clear();
+            Helpers.ClearConsole();
         }
     }
 }

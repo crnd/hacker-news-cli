@@ -6,10 +6,14 @@ namespace Purkki.HackerNews.CLI
 {
     public static class Helpers
     {
+        public static void ClearConsole()
+        {
+            Console.ResetColor();
+            Console.Clear();
+        }
+
         public static void PrintStories(IList<Story> stories)
         {
-            Console.Clear();
-
             PrintStoryRow(stories[0], ConsoleColor.White, ConsoleColor.Gray);
             for (var i = 1; i < stories.Count; i++)
             {
