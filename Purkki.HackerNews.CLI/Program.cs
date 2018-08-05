@@ -44,6 +44,13 @@ namespace Purkki.HackerNews.CLI
                             render = true;
                         }
                         break;
+                    case ConsoleKey.R:
+                        Helpers.ClearConsole();
+                        Helpers.PrintLoadingScreen();
+                        await client.RefreshTopStoryIdsAsync();
+                        index = 0;
+                        render = true;
+                        break;
                     default:
                         break;
                 }
