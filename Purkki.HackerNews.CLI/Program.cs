@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Purkki.HackerNews.CLI.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Purkki.HackerNews.CLI
@@ -10,8 +13,9 @@ namespace Purkki.HackerNews.CLI
 			Helpers.ClearConsole();
 			Helpers.PrintLoadingScreen();
 
-			var client = new ApiClient("https://hacker-news.firebaseio.com/v0/");
-			await client.RefreshTopStoryIdsAsync();
+			var client = ApiHelper.CreateHttpClient("https://hacker-news.firebaseio.com/v0/");
+			var storyIds = await ApiHelper.GetTopStoryIdsAsync(client);
+			var stories = new Dictionary<long, Story>();
 
 			var key = ConsoleKey.NoName;
 			var index = 0;
@@ -21,9 +25,10 @@ namespace Purkki.HackerNews.CLI
 			{
 				if (render)
 				{
-					var stories = await client.FetchTopStoriesAsync(index, Console.WindowHeight - 1);
+					var visibleToStoryIds = storyIds.Skip(index).Take(Console.WindowHeight - 1).ToList();
+					var visibleStories = await ApiHelper.GetTopStoriesAsync(client, visibleToStoryIds, stories);
 					Helpers.ClearConsole();
-					Helpers.PrintStories(stories);
+					Helpers.PrintStories(visibleStories);
 					render = false;
 				}
 
@@ -38,7 +43,7 @@ namespace Purkki.HackerNews.CLI
 						}
 						break;
 					case ConsoleKey.DownArrow:
-						if (index != client.StoryCount - 1)
+						if (index != storyIds.Count - 1)
 						{
 							index++;
 							render = true;
@@ -47,7 +52,8 @@ namespace Purkki.HackerNews.CLI
 					case ConsoleKey.R:
 						Helpers.ClearConsole();
 						Helpers.PrintLoadingScreen();
-						await client.RefreshTopStoryIdsAsync();
+						storyIds = await ApiHelper.GetTopStoryIdsAsync(client);
+						stories.Clear();
 						index = 0;
 						render = true;
 						break;
